@@ -1,0 +1,44 @@
+/* Base HTML and body styles */
+html, body, #root {
+  background: #000 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100dvh;
+  min-width: 100vw;
+  width: 100vw;
+  height: 100dvh;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  scrollbar-width: none; /* Firefox scrollbar removal */
+  font-family: 'Inter', Arial, sans-serif; /* Font family */
+}
+
+/* Universal styles */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+/* Form and interactive elements */
+button, input, textarea, select, svg, video {
+  -webkit-tap-highlight-color: transparent !important;
+  background: none;
+  outline: none;
+  border: none;
+}
+
+/* Focus states */
+button:focus, input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Scrollbar removal */
+::-webkit-scrollbar { 
+  display: none; /* Chrome/Safari scrollbar removal */
+}
+
+
