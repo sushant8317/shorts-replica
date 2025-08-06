@@ -10,7 +10,8 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // For parsing JSON bodies
 
-const DISK_PATH = '/data'; // Must match your Render persistent disk mount path
+// Updated to use a relative, writable path
+const DISK_PATH = path.join(process.cwd(), 'data');
 
 // Debug endpoint to check disk contents
 app.get('/_diskdebug', (req, res) => {
@@ -67,7 +68,6 @@ function adminJwtAuth(req, res, next) {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, DISK_PATH),
   filename: (req, file, cb) => {
-    // We'll determine final filename after hash check in route
     cb(null, `${crypto.randomUUID()}${path.extname(file.originalname)}`);
   }
 });
@@ -149,10 +149,11 @@ app.post('/upload', adminJwtAuth, upload.single('video'), (req, res) => {
     fs.unlinkSync(tempPath);
     return res.status(400).json({ error: "Failed to read file for hashing." });
   }
+
   // Check for duplicate
   const dup = findVideoByHash(videos, incomingHash);
   if (dup) {
-    fs.unlinkSync(tempPath); // Remove duplicate file
+    fs.unlinkSync(tempPath);
     return res.json({ 
       success: true, 
       duplicate: true, 
@@ -171,6 +172,7 @@ app.post('/upload', adminJwtAuth, upload.single('video'), (req, res) => {
     fs.unlinkSync(tempPath);
     return res.status(400).json({ error: "Caption too long" });
   }
+
   videos.unshift({
     url: videoUrl,
     filename: req.file.filename,
@@ -217,6 +219,7 @@ app.delete('/delete/:filename', adminJwtAuth, (req, res) => {
       return res.status(500).json({ error: "Failed to delete video file" });
     }
   }
+
   let videos = getVideos();
   const initialLength = videos.length;
   videos = videos.filter(v => {
@@ -226,6 +229,7 @@ app.delete('/delete/:filename', adminJwtAuth, (req, res) => {
     }
     return true;
   });
+
   if (!deletedVideo && initialLength === videos.length)
     return res.status(404).json({ error: "Video not found" });
 
@@ -235,4 +239,3 @@ app.delete('/delete/:filename', adminJwtAuth, (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
