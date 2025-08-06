@@ -26,7 +26,7 @@ app.get('/_diskdebug', (req, res) => {
 if (!fs.existsSync(DISK_PATH)) fs.mkdirSync(DISK_PATH, { recursive: true });
 
 // Persistent video "database"
-const VIDEOS_JSON = path.join(__dirname, 'videos.json');
+const VIDEOS_JSON = path.join(process.cwd(), 'videos.json');
 function getVideos() {
   if (!fs.existsSync(VIDEOS_JSON)) return [];
   try { return JSON.parse(fs.readFileSync(VIDEOS_JSON, 'utf-8') || '[]'); } catch { return []; }
